@@ -12,14 +12,22 @@ import com.android.popmoviesfirst.R;
 import com.android.popmoviesfirst.api.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class DetailsFragment extends Fragment {
 
     Movie movieBundle;
+    @BindView(R.id.originalTitle)
     TextView originalTitle;
+    @BindView(R.id.overview)
     TextView overview;
+    @BindView(R.id.userRating)
     TextView userRating;
+    @BindView(R.id.releaseDate)
     TextView releaseDate;
+    @BindView(R.id.imageThumb)
     ImageView imageThumb;
 
     public DetailsFragment() {
@@ -29,7 +37,7 @@ public class DetailsFragment extends Fragment {
     public static DetailsFragment newInstance(Movie movie) {
         DetailsFragment fragment = new DetailsFragment();
         Bundle args = new Bundle();
-        args.putSerializable("Movie", movie);
+        args.putParcelable("Movie", movie);
         fragment.setArguments(args);
         return fragment;
     }
@@ -39,23 +47,19 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
+        ButterKnife.bind(this,v);
         // Inflate the layout for this fragment
         Bundle bundle = getArguments();
         if (bundle != null) {
 
-            movieBundle = (Movie) bundle.getSerializable("Movie");
+            movieBundle = (Movie) bundle.getParcelable("Movie");
         }
 
-        originalTitle = v.findViewById(R.id.originalTitle);
         originalTitle.setText(movieBundle.getOriginalTitle());
         //image thumb
-        imageThumb = v.findViewById(R.id.imageThumb);
-        Picasso.with(getActivity()).load(movieBundle.getImageThumb()).into(imageThumb);
-        userRating = v.findViewById(R.id.userRating);
+        Picasso.with(getActivity()).load(movieBundle.getImageThumb()).placeholder(R.drawable.ic_none).error(R.drawable.ic_error).into(imageThumb);
         userRating.setText(movieBundle.getUserRating() + "/10");
-        releaseDate = v.findViewById(R.id.releaseDate);
         releaseDate.setText(movieBundle.getReleaseDate());
-        overview = v.findViewById(R.id.overview);
         overview.setText(movieBundle.getOverview());
         return v;
     }

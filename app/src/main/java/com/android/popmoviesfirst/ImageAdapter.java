@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<String> uriImage;
+
     // Constructor
     public ImageAdapter(Context c, ArrayList<String> uriImage) {
         mContext = c;
@@ -49,7 +50,7 @@ public class ImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-        Picasso.with(mContext).load(uriImage.get(position)).into(imageView);
+        Picasso.with(mContext).load(uriImage.get(position)).placeholder(R.drawable.ic_none).error(R.drawable.ic_error).into(imageView);
         return imageView;
     }
 

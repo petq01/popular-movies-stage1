@@ -19,8 +19,7 @@
                 android:orientation="horizontal">
                 <TextView
                     android:id="@+id/originalTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/wrap_contents"
                     tools:text="Original title" />
             </LinearLayout>
 
@@ -32,8 +31,7 @@
 
                 <ImageView
                     android:id="@+id/imageThumb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/wrap_contents"
                     android:contentDescription="@string/content_decr" />
 
                 <LinearLayout
@@ -42,40 +40,34 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        style="@style/wrap_contents"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/wrap_contents"
                             android:text="@string/vote_average"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginRight="5dp"/>
+                            android:layout_marginEnd="@dimen/margin_tv"
+                            android:layout_marginRight="@dimen/margin_tv"/>
 
                         <TextView
                             android:id="@+id/userRating"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/wrap_contents"
                             tools:text="rating" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        style="@style/wrap_contents"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/wrap_contents"
                             android:text="@string/released"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginRight="5dp"/>
+                            android:layout_marginEnd="@dimen/margin_tv"
+                            android:layout_marginRight="@dimen/margin_tv"/>
 
                         <TextView
                             android:id="@+id/releaseDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/wrap_contents"
                             tools:text="release date" />
                     </LinearLayout>
 
@@ -90,14 +82,12 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    style="@style/wrap_contents"
                     android:text="@string/overview" />
 
                 <TextView
                     android:id="@+id/overview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    style="@style/wrap_contents"
                     tools:text="overview" />
             </LinearLayout>
         </LinearLayout>

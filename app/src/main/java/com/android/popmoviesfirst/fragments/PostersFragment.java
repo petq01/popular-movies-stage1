@@ -22,6 +22,8 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -33,6 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class PostersFragment extends Fragment {
+    @BindView(R.id.gridview)
     GridView gridview;
     ArrayList<String> images;
     Movie movie;
@@ -60,7 +63,7 @@ public class PostersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posters, container, false);
-        gridview = (GridView) v.findViewById(R.id.gridview);
+        ButterKnife.bind(this, v);
         return v;
     }
 
