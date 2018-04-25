@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+//apply plugin: 'realm-android'
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -20,6 +20,7 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+
 }
 
 dependencies {
@@ -29,7 +30,8 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:support-v4:26.1.0'
     compile 'com.github.bumptech.glide:glide:4.3.1'
-
+    compile 'android.arch.persistence.room:runtime:1.0.0'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.0.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
@@ -42,4 +44,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
 }

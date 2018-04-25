@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PopMoviesFirst</string>
+    <string name="app_name">PopMoviesSecond</string>
     <string name="message_connection_timeout">Connection timeout</string>
     <string name="message_check_connection">Please check internet connection</string>
 

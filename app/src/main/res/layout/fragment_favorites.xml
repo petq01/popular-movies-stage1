@@ -1,24 +1,20 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:weightSum="4"
     tools:context="com.android.popmoviessecond.fragments.DetailsFragment">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:weightSum="4">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
                 <TextView
-                    android:id="@+id/originalTitle"
+                    android:id="@+id/originalTitleFav"
                     style="@style/wrap_contents"
                     tools:text="Original title" />
             </LinearLayout>
@@ -30,7 +26,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/imageThumb"
+                    android:id="@+id/imageThumbFav"
                     style="@style/wrap_contents"
                     android:contentDescription="@string/content_decr" />
 
@@ -50,7 +46,7 @@
                             android:layout_marginRight="@dimen/margin_tv"/>
 
                         <TextView
-                            android:id="@+id/userRating"
+                            android:id="@+id/userRatingFav"
                             style="@style/wrap_contents"
                             tools:text="rating" />
                     </LinearLayout>
@@ -66,45 +62,13 @@
                             android:layout_marginRight="@dimen/margin_tv"/>
 
                         <TextView
-                            android:id="@+id/releaseDate"
+                            android:id="@+id/releaseDateFav"
                             style="@style/wrap_contents"
                             tools:text="release date" />
                     </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/trailerBtn"
-                    android:background="@drawable/ic_play_tailer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/youtube_trailer"
-                    android:background="@drawable/ic_play_tailer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/reviewBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="reviews"/>
-                <Button
-                    android:id="@+id/fav"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/ic_fav_heart"/>
-                <Button
-                    android:id="@+id/unfav"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/ic_unfav"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -117,13 +81,12 @@
                     android:text="@string/overview" />
 
                 <TextView
-                    android:id="@+id/overview"
+                    android:id="@+id/overviewFav"
                     style="@style/wrap_contents"
                     tools:text="overview" />
 
 
             </LinearLayout>
 
-        </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

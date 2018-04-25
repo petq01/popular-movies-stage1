@@ -1,4 +1,4 @@
-package com.android.popmoviesfirst.fragments;
+package com.android.popmoviessecond.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -12,12 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.android.popmoviesfirst.ImageAdapter;
-import com.android.popmoviesfirst.api.MovieAPI;
-import com.android.popmoviesfirst.R;
-import com.android.popmoviesfirst.api.model.Movie;
-import com.android.popmoviesfirst.api.model.response.MovieResponse;
-import com.android.popmoviesfirst.api.model.response.Result;
+import com.android.popmoviessecond.ImageAdapter;
+import com.android.popmoviessecond.api.MovieAPI;
+import com.android.popmoviessecond.R;
+import com.android.popmoviessecond.api.model.Movie;
+import com.android.popmoviessecond.api.model.response.MovieResponse;
+import com.android.popmoviessecond.api.model.response.MovieResult;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class PostersFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(responses -> {
                     images = new ArrayList<>();
-                    for (Result img : responses.results) {
+                    for (MovieResult img : responses.movieResults) {
                         images.add("http://image.tmdb.org/t/p/w185/" + img.posterPath);
 
                     }
@@ -98,11 +98,12 @@ public class PostersFragment extends Fragment {
                     gridview.setOnItemClickListener((parent, v, position, id) -> {
                         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                         movie = new Movie();
-                        movie.setOriginalTitle(responses.results.get(position).originalTitle);
-                        movie.setOverview(responses.results.get(position).overview);
-                        movie.setReleaseDate(responses.results.get(position).releaseDate);
-                        movie.setUserRating(responses.results.get(position).voteAverage);
-                        movie.setImageThumb("http://image.tmdb.org/t/p/w92/" + responses.results.get(position).posterPath);
+                        movie.setMovie_id(responses.movieResults.get(position).id);
+                        movie.setOriginalTitle(responses.movieResults.get(position).originalTitle);
+                        movie.setOverview(responses.movieResults.get(position).overview);
+                        movie.setReleaseDate(responses.movieResults.get(position).releaseDate);
+                        movie.setUserRating(responses.movieResults.get(position).voteAverage);
+                        movie.setImageThumb("http://image.tmdb.org/t/p/w92/" + responses.movieResults.get(position).posterPath);
                         fragmentTransaction.replace(R.id.container_fragments, DetailsFragment.newInstance(movie), DetailsFragment.class.getSimpleName());
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();

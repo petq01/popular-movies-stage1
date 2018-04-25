@@ -1,5 +1,5 @@
 
-package com.android.popmoviesfirst.api.model.response;
+package com.android.popmoviessecond.api.model.response;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
@@ -12,7 +12,7 @@ public class MovieResponse {
     public Integer page;
     @SerializedName("results")
     @Expose
-    public List<Result> results;
+    public List<MovieResult> movieResults;
     @SerializedName("total_results")
     @Expose
     public Integer totalResults;

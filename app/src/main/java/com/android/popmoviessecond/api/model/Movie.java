@@ -1,9 +1,7 @@
-package com.android.popmoviesfirst.api.model;
+package com.android.popmoviessecond.api.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.io.Serializable;
 
 /**
  * Created by Petya Marinova on 04-Mar-18.
@@ -15,6 +13,7 @@ public class Movie implements Parcelable {
     private String overview;
     private Double userRating;
     private String releaseDate;
+    private Integer movie_id;
 
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -26,6 +25,7 @@ public class Movie implements Parcelable {
             movie.setOverview(in.readString());
             movie.setReleaseDate(in.readString());
             movie.setUserRating(in.readDouble());
+            movie.setMovie_id(in.readInt());
             return movie;
         }
 
@@ -34,7 +34,13 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+    public Integer getMovie_id() {
+        return movie_id;
+    }
 
+    public void setMovie_id(Integer movie_id) {
+        this.movie_id = movie_id;
+    }
     public String getOriginalTitle() {
         return originalTitle;
     }
@@ -88,5 +94,6 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeDouble(userRating);
         dest.writeString(releaseDate);
+        dest.writeInt(movie_id);
     }
 }

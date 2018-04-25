@@ -1,4 +1,4 @@
-package com.android.popmoviesfirst;
+package com.android.popmoviessecond;
 
 import org.junit.Test;
 
