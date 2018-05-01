@@ -1,0 +1,72 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/originalTitle"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#42c2c9"
+        android:fontFamily="sans-serif"
+        android:gravity="start|center"
+        android:paddingLeft="20dp"
+        android:paddingStart="20dp"
+        android:textColor="@android:color/white"
+        android:textSize="22sp"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Original title" />
+
+
+    <ImageView
+        android:id="@+id/imageThumb"
+        style="@style/wrap_contents"
+        android:contentDescription="@string/content_decr"
+        android:padding="20dp"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/originalTitle" />
+
+
+    <TextView
+        android:id="@+id/userRating"
+        style="@style/wrap_contents"
+        android:textSize="22sp"
+        app:layout_constraintLeft_toRightOf="@+id/imageThumb"
+        app:layout_constraintTop_toBottomOf="@+id/originalTitle"
+        tools:text="rating" />
+
+
+    <TextView
+        android:id="@+id/releaseDate"
+        style="@style/wrap_contents"
+        android:textSize="22sp"
+        app:layout_constraintLeft_toRightOf="@+id/imageThumb"
+        app:layout_constraintTop_toBottomOf="@+id/userRating"
+        tools:text="release date" />
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000"
+        android:padding="10dp"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageThumb" />
+
+
+    <TextView
+        android:id="@+id/overview"
+        style="@style/wrap_contents"
+        android:fontFamily="sans-serif"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        tools:text="overview" />
+
+
+</android.support.constraint.ConstraintLayout>

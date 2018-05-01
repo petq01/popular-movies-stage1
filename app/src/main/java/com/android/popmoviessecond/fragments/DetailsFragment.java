@@ -5,19 +5,21 @@ import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.popmoviessecond.BasicApp;
 import com.android.popmoviessecond.R;
 import com.android.popmoviessecond.api.MovieAPI;
 import com.android.popmoviessecond.api.model.Movie;
 import com.android.popmoviessecond.api.model.response.VideoResponse;
+import com.android.popmoviessecond.room.FavMovieDatabase;
 import com.android.popmoviessecond.room.entities.FavMovieEntity;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.picasso.Picasso;
@@ -33,7 +35,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class DetailsFragment extends Fragment {
-    //    private Realm mRealm;
     Movie movieBundle;
     @BindView(R.id.originalTitle)
     TextView originalTitle;
@@ -45,12 +46,21 @@ public class DetailsFragment extends Fragment {
     TextView releaseDate;
     @BindView(R.id.imageThumb)
     ImageView imageThumb;
-    BasicApp basicApp;
+    @BindView(R.id.fav)
+    Button btnFav;
+    @BindView(R.id.unfav)
+    Button btnUnFav;
 
+//    FavMovieDatabase favMovieDatabase;
 
     public DetailsFragment() {
         // Required empty public constructor
     }
+
+    private int mCounter;
+
+    private static final String STATE_COUNTER = "counter";
+
 
     public static DetailsFragment newInstance(Movie movie) {
         DetailsFragment fragment = new DetailsFragment();
@@ -63,7 +73,11 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        mRealm = Realm.getInstance(getContext());
+//        favMovieDatabase = Room.databaseBuilder(getActivity(), FavMovieDatabase.class, FavMovieDatabase.DB_NAME).build();
+        setRetainInstance(true);
+        if (savedInstanceState != null) {
+            mCounter = savedInstanceState.getInt(STATE_COUNTER, 0);
+        }
     }
 
     @Override
@@ -72,6 +86,7 @@ public class DetailsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this, v);
         // Inflate the layout for this fragment
+
         Bundle bundle = getArguments();
         if (bundle != null) {
 
@@ -82,16 +97,29 @@ public class DetailsFragment extends Fragment {
             userRating.setText(String.format("%s/10", movieBundle.getUserRating().toString()));
             releaseDate.setText(movieBundle.getReleaseDate());
             overview.setText(movieBundle.getOverview());
+            checkMovieFavorite();
         }
 
 
         return v;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        mRealm.close();
+    public void checkMovieFavorite() {
+
+        AsyncTask.execute(() -> {
+            if (FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().findByOriginalTitle(movieBundle.getOriginalTitle()) == null) {
+                getActivity().runOnUiThread(() -> {
+                    btnUnFav.setVisibility(View.INVISIBLE);
+                    btnFav.setVisibility(View.VISIBLE);
+                });
+
+            } else {
+                getActivity().runOnUiThread(() -> {
+                    btnUnFav.setVisibility(View.VISIBLE);
+                    btnFav.setVisibility(View.INVISIBLE);
+                });
+            }
+        });
     }
 
     @OnClick(R.id.fav)
@@ -102,27 +130,30 @@ public class DetailsFragment extends Fragment {
         favMovieEntity.setReleaseDate(movieBundle.getReleaseDate());
         favMovieEntity.setUserRating(movieBundle.getUserRating() + "/10");
         favMovieEntity.setAvatarPath(movieBundle.getImageThumb());
-        basicApp.database.favMovieDao().insert(favMovieEntity);
-//        mRealm.beginTransaction();
-//        MovieFavorite movieFavorite = mRealm.createObject(MovieFavorite.class);
-//        movieFavorite.setMovieId(movieBundle.getMovie_id());
-//        movieFavorite.setName(movieBundle.getOriginalTitle());
-//        mRealm.commitTransaction();
-//        realmHelper.save(movieFavorite);
+        AsyncTask.execute(() -> {
+            FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().insert(favMovieEntity);
+        });
+        getActivity().runOnUiThread(() -> {
+            btnUnFav.setVisibility(View.VISIBLE);
+            btnFav.setVisibility(View.INVISIBLE);
+        });
+
+
     }
 
     @OnClick(R.id.unfav)
     public void onRemoveClick() {
-        FavMovieEntity favMovieEntity = basicApp.database.favMovieDao().findByOriginalTitle(movieBundle.getOriginalTitle());
-        basicApp.database.favMovieDao().delete(favMovieEntity);
-//        mRealm.beginTransaction();
-//        RealmResults<MovieFavorite> movieFavoriteRealmResults = mRealm.where(MovieFavorite.class).equalTo("name", movieBundle.getOriginalTitle()).findAll();
-//        if (!movieFavoriteRealmResults.isEmpty()) {
-//            for (int i = movieFavoriteRealmResults.size() - 1; i >= 0; i--) {
-//                movieFavoriteRealmResults.get(i).removeFromRealm();
-//            }
-//        }
-//        mRealm.commitTransaction();
+
+        AsyncTask.execute(() -> {
+            FavMovieEntity favMovieEntity = FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().findByOriginalTitle(movieBundle.getOriginalTitle());
+            FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().delete(favMovieEntity);
+        });
+        getActivity().runOnUiThread(() -> {
+            btnUnFav.setVisibility(View.INVISIBLE);
+            btnFav.setVisibility(View.VISIBLE);
+        });
+
+
     }
 
     private MovieAPI createAPI() {
@@ -184,6 +215,5 @@ public class DetailsFragment extends Fragment {
                     }
                 });
     }
-
 
 }

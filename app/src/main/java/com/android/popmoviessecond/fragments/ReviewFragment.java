@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.popmoviessecond.R;
-import com.android.popmoviessecond.ReviewAdapter;
 import com.android.popmoviessecond.api.MovieAPI;
 import com.android.popmoviessecond.api.model.ReviewModel;
 import com.android.popmoviessecond.api.model.response.ReviewResponse;
 import com.android.popmoviessecond.api.model.response.ReviewResult;
+import com.android.popmoviessecond.fragments.adapters.ReviewAdapter;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.ArrayList;

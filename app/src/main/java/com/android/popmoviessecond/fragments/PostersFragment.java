@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.android.popmoviessecond.ImageAdapter;
+import com.android.popmoviessecond.fragments.adapters.ImageAdapter;
 import com.android.popmoviessecond.api.MovieAPI;
 import com.android.popmoviessecond.R;
 import com.android.popmoviessecond.api.model.Movie;
@@ -37,12 +37,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class PostersFragment extends Fragment {
     @BindView(R.id.gridview)
     GridView gridview;
-    ArrayList<String> images;
+
     Movie movie;
 
     public PostersFragment() {
 
     }
+
 
     public static PostersFragment newInstance() {
 
@@ -55,15 +56,18 @@ public class PostersFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
+        setRetainInstance(true);
+
 
     }
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posters, container, false);
         ButterKnife.bind(this, v);
+        moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
         return v;
     }
 
@@ -71,7 +75,6 @@ public class PostersFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         inflater.inflate(R.menu.menu, menu);
-
     }
 
     private MovieAPI createAPI() {
@@ -89,7 +92,7 @@ public class PostersFragment extends Fragment {
         movieResponse.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(responses -> {
-                    images = new ArrayList<>();
+                    ArrayList<String> images = new ArrayList<>();
                     for (MovieResult img : responses.movieResults) {
                         images.add("http://image.tmdb.org/t/p/w185/" + img.posterPath);
 
@@ -103,7 +106,7 @@ public class PostersFragment extends Fragment {
                         movie.setOverview(responses.movieResults.get(position).overview);
                         movie.setReleaseDate(responses.movieResults.get(position).releaseDate);
                         movie.setUserRating(responses.movieResults.get(position).voteAverage);
-                        movie.setImageThumb("http://image.tmdb.org/t/p/w92/" + responses.movieResults.get(position).posterPath);
+                        movie.setImageThumb("http://image.tmdb.org/t/p/w185/" + responses.movieResults.get(position).posterPath);
                         fragmentTransaction.replace(R.id.container_fragments, DetailsFragment.newInstance(movie), DetailsFragment.class.getSimpleName());
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
@@ -124,6 +127,12 @@ public class PostersFragment extends Fragment {
                 return true;
             case R.id.rated:
                 moviesRequest(createAPI().getTopRated(MovieAPI.KEY));
+                return true;
+            case R.id.personal:
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container_fragments, PersonalFragment.newInstance(), PersonalFragment.class.getSimpleName());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

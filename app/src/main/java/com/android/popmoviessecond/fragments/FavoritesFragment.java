@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.popmoviessecond.R;
+
 /**
  * Created by Petya Marinova on 22-Apr-18.
  */
 
 public class FavoritesFragment extends Fragment {
-    public FavoritesFragment(){
+    public FavoritesFragment() {
 
     }
 
@@ -25,6 +27,12 @@ public class FavoritesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_details, container, false);
-return v;
+        return v;
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
     }
 }

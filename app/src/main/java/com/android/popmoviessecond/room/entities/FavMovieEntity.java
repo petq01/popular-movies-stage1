@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
  * Created by Petya Marinova on 22-Apr-18.
  */
 
-@Entity
+@Entity(tableName = "FavMovieEntity")
 public class FavMovieEntity  {
     @PrimaryKey(autoGenerate = true)
     private int uid;
@@ -20,6 +20,9 @@ public class FavMovieEntity  {
     private String userRating;
     @ColumnInfo(name = "releaseDate")
     private String releaseDate;
+
+
+
 
     public String getAvatarPath() {
         return avatarPath;
@@ -39,7 +42,6 @@ public class FavMovieEntity  {
     public void setUid(int uid) {
         this.uid = uid;
     }
-
 
     public String getOriginalTitle() {
         return originalTitle;

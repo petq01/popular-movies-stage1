@@ -14,8 +14,8 @@ import retrofit2.http.Query;
  * Created by Petya Marinova on 27-Feb-18.
  */
 public interface MovieAPI {
-     String BASE_URL = "https://api.themoviedb.org/3/";
-     String KEY = "e58dd8463abbef0fff6a77e447d71357";
+    String BASE_URL = "https://api.themoviedb.org/3/";
+    String KEY = "e58dd8463abbef0fff6a77e447d71357";
 
     @GET("movie/popular?page=1&language=en-US")
     Observable<MovieResponse> getPopularMovies(
@@ -26,11 +26,13 @@ public interface MovieAPI {
     Observable<MovieResponse> getTopRated(
             @Query("api_key") String apiKey
     );
+
     @GET("movie/{movie_id}/videos")
     Observable<VideoResponse> getVideos(
             @Path("movie_id") Integer movie_id,
             @Query("api_key") String apiKey
     );
+
     @GET("movie/{movie_id}/reviews?page=1")
     Observable<ReviewResponse> getReviews(
             @Path("movie_id") Integer movie_id,

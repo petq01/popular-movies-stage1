@@ -18,11 +18,12 @@ public interface FavMovieDao {
     @Query("SELECT * FROM FavMovieEntity")
     List<FavMovieEntity> getAll();
 
-    @Query("SELECT * FROM favMovieEntity WHERE originalTitle LIKE :originalTitle LIMIT 1")
+    @Query("SELECT * FROM FavMovieEntity WHERE originalTitle LIKE :originalTitle LIMIT 1")
     FavMovieEntity findByOriginalTitle(String originalTitle);
 
     @Insert
     void insertAll(List<FavMovieEntity> list);
+
     @Insert
     void insert(FavMovieEntity favMovieEntity);
 

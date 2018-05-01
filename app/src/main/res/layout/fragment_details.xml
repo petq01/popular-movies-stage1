@@ -1,129 +1,133 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.android.popmoviessecond.fragments.DetailsFragment">
 
-        <LinearLayout
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/originalTitle"
             android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#42c2c9"
+            android:fontFamily="sans-serif"
+            android:gravity="start|center"
+            android:paddingLeft="20dp"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            app:layout_constraintLeft_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Original title" />
+
+
+        <ImageView
+            android:id="@+id/imageThumb"
+            style="@style/wrap_contents"
+            android:contentDescription="@string/content_decr"
+            android:padding="20dp"
+            app:layout_constraintLeft_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/originalTitle" />
+
+
+        <!--<TextView-->
+        <!--android:id="@+id/vote_average_label"-->
+        <!--style="@style/wrap_contents"-->
+        <!--android:layout_marginEnd="@dimen/margin_tv"-->
+        <!--android:layout_marginRight="@dimen/margin_tv"-->
+        <!--android:text="@string/vote_average"-->
+        <!--app:layout_constraintLeft_toRightOf="@+id/imageThumb"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/originalTitle" />-->
+
+        <TextView
+            android:id="@+id/userRating"
+            style="@style/wrap_contents"
+            android:textSize="22sp"
+            app:layout_constraintLeft_toRightOf="@+id/imageThumb"
+            app:layout_constraintTop_toBottomOf="@+id/originalTitle"
+            tools:text="rating" />
+
+
+        <TextView
+            android:id="@+id/releaseDate"
+            style="@style/wrap_contents"
+            android:textSize="22sp"
+            app:layout_constraintLeft_toRightOf="@+id/imageThumb"
+            app:layout_constraintTop_toBottomOf="@+id/userRating"
+            tools:text="release date" />
+
+        <Button
+            android:id="@+id/fav"
+            android:layout_width="50dp"
+
+            android:layout_height="50dp"
+            android:background="@drawable/ic_fav_heart"
+            app:layout_constraintLeft_toRightOf="@+id/imageThumb"
+            app:layout_constraintTop_toBottomOf="@+id/releaseDate" />
+
+        <Button
+            android:id="@+id/unfav"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+
+            android:background="@drawable/ic_unfav"
+            app:layout_constraintLeft_toRightOf="@+id/fav"
+            app:layout_constraintTop_toBottomOf="@+id/releaseDate" />
+
+
+        <Button
+            android:id="@+id/trailerBtn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:weightSum="4">
+            android:background="@drawable/ic_video"
+            android:padding="5dp"
+            app:layout_constraintLeft_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageThumb" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/originalTitle"
-                    style="@style/wrap_contents"
-                    tools:text="Original title" />
-            </LinearLayout>
+        <Button
+            android:id="@+id/youtube_trailer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_ico_yout"
+            android:padding="5dp"
+            app:layout_constraintLeft_toRightOf="@+id/trailerBtn"
+            app:layout_constraintTop_toBottomOf="@+id/imageThumb" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imageThumb"
-                    style="@style/wrap_contents"
-                    android:contentDescription="@string/content_decr" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        style="@style/wrap_contents"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            style="@style/wrap_contents"
-                            android:text="@string/vote_average"
-                            android:layout_marginEnd="@dimen/margin_tv"
-                            android:layout_marginRight="@dimen/margin_tv"/>
-
-                        <TextView
-                            android:id="@+id/userRating"
-                            style="@style/wrap_contents"
-                            tools:text="rating" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        style="@style/wrap_contents"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            style="@style/wrap_contents"
-                            android:text="@string/released"
-                            android:layout_marginEnd="@dimen/margin_tv"
-                            android:layout_marginRight="@dimen/margin_tv"/>
-
-                        <TextView
-                            android:id="@+id/releaseDate"
-                            style="@style/wrap_contents"
-                            tools:text="release date" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/trailerBtn"
-                    android:background="@drawable/ic_play_tailer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/youtube_trailer"
-                    android:background="@drawable/ic_play_tailer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/reviewBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="reviews"/>
-                <Button
-                    android:id="@+id/fav"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/ic_fav_heart"/>
-                <Button
-                    android:id="@+id/unfav"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/ic_unfav"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/wrap_contents"
-                    android:text="@string/overview" />
-
-                <TextView
-                    android:id="@+id/overview"
-                    style="@style/wrap_contents"
-                    tools:text="overview" />
+        <Button
+            android:id="@+id/reviewBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_note"
+            android:text="reviews"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toRightOf="@+id/youtube_trailer"
+            app:layout_constraintTop_toBottomOf="@+id/imageThumb" />
 
 
-            </LinearLayout>
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000"
+            android:padding="10dp"
+            app:layout_constraintLeft_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reviewBtn" />
 
-        </LinearLayout>
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/overview"
+            style="@style/wrap_contents"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            tools:text="overview" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
