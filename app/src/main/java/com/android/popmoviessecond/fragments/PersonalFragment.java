@@ -1,6 +1,7 @@
 package com.android.popmoviessecond.fragments;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.android.popmoviessecond.R;
 import com.android.popmoviessecond.fragments.adapters.FavAdapter;
-import com.android.popmoviessecond.room.FavMovieDatabase;
-import com.android.popmoviessecond.room.entities.FavMovieEntity;
+import com.android.popmoviessecond.room.provider.FavMovieCP;
+import com.android.popmoviessecond.room.provider.SampleDatabase;
 
 import java.util.List;
 
@@ -22,7 +23,6 @@ public class PersonalFragment extends Fragment {
     @BindView(R.id.rv_personal)
     RecyclerView recyclerView;
     FavAdapter favAdapter;
-
     public static PersonalFragment newInstance() {
 
         return new PersonalFragment();
@@ -31,15 +31,12 @@ public class PersonalFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_personal_collection, container, false);
         ButterKnife.bind(this, v);
-
 
         return v;
     }
@@ -47,10 +44,14 @@ public class PersonalFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        List<FavMovieEntity> favMovieEntities = FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().getAll();
-        favAdapter = new FavAdapter(favMovieEntities, getActivity());
-        favAdapter.notifyDataSetChanged();
-        recyclerView.setAdapter(favAdapter);
+            AsyncTask.execute(() -> {
+                List<FavMovieCP> favMovieCPS = SampleDatabase.getInstance(getActivity()).favMovie().getAll();
+                FavAdapter favAdapter = new FavAdapter(favMovieCPS, getActivity());
+                favAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(() -> {
+                    recyclerView.setAdapter(favAdapter);
+                });
+            });
     }
 }
 

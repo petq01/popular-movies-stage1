@@ -40,6 +40,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
+    implementation "com.android.support:preference-v14:26.1.0"
     compile 'com.squareup.picasso:picasso:2.5.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

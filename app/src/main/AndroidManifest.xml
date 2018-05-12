@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <permission android:name="com.android.popmoviessecond.room.provider.READ_WRITE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,6 +20,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--<provider-->
+            <!--android:name=".room.provider.SampleContentProvider"-->
+            <!--android:authorities="com.android.popmoviessecond"-->
+            <!--android:exported="true"-->
+            <!--android:permission="com.android.popmoviessecond.room.provider.READ_WRITE"/>-->
+        <!--<provider android:name=".sqllite.MovieProvider" android:exported="true"-->
+            <!--android:readPermission="true" android:writePermission="true"-->
+            <!--android:authorities="com.android.popmoviessecond" />-->
+        <provider
+            android:authorities="com.android.popmoviessecond"
+            android:name=".room.provider.SampleContentProvider" android:exported="true"
+            android:protectionLevel="signature"
+            android:readPermission="true" android:writePermission="true"/>
     </application>
 
 </manifest>

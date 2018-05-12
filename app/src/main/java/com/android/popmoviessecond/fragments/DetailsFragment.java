@@ -3,11 +3,16 @@ package com.android.popmoviessecond.fragments;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +24,9 @@ import com.android.popmoviessecond.R;
 import com.android.popmoviessecond.api.MovieAPI;
 import com.android.popmoviessecond.api.model.Movie;
 import com.android.popmoviessecond.api.model.response.VideoResponse;
-import com.android.popmoviessecond.room.FavMovieDatabase;
-import com.android.popmoviessecond.room.entities.FavMovieEntity;
+import com.android.popmoviessecond.room.provider.FavMovieCP;
+import com.android.popmoviessecond.room.provider.SampleContentProvider;
+import com.android.popmoviessecond.room.provider.SampleDatabase;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +40,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class DetailsFragment extends Fragment {
+public class DetailsFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor> {
     Movie movieBundle;
     @BindView(R.id.originalTitle)
     TextView originalTitle;
@@ -57,9 +64,7 @@ public class DetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private int mCounter;
-
-    private static final String STATE_COUNTER = "counter";
+    private int detailId;
 
 
     public static DetailsFragment newInstance(Movie movie) {
@@ -73,11 +78,7 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        favMovieDatabase = Room.databaseBuilder(getActivity(), FavMovieDatabase.class, FavMovieDatabase.DB_NAME).build();
         setRetainInstance(true);
-        if (savedInstanceState != null) {
-            mCounter = savedInstanceState.getInt(STATE_COUNTER, 0);
-        }
     }
 
     @Override
@@ -92,7 +93,6 @@ public class DetailsFragment extends Fragment {
 
             movieBundle = bundle.getParcelable("Movie");
             originalTitle.setText(movieBundle.getOriginalTitle());
-            //image thumb
             Picasso.with(getActivity()).load(movieBundle.getImageThumb()).placeholder(R.drawable.ic_none).error(R.drawable.ic_error).into(imageThumb);
             userRating.setText(String.format("%s/10", movieBundle.getUserRating().toString()));
             releaseDate.setText(movieBundle.getReleaseDate());
@@ -105,18 +105,28 @@ public class DetailsFragment extends Fragment {
     }
 
     public void checkMovieFavorite() {
-
         AsyncTask.execute(() -> {
-            if (FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().findByOriginalTitle(movieBundle.getOriginalTitle()) == null) {
-                getActivity().runOnUiThread(() -> {
-                    btnUnFav.setVisibility(View.INVISIBLE);
-                    btnFav.setVisibility(View.VISIBLE);
-                });
 
-            } else {
+            Cursor originalTitle = getActivity().getContentResolver().query(
+                    SampleContentProvider.URI_MOVIE,
+                    new String[]{FavMovieCP.COLUMN_TITLE},
+                    "originalTitle = ? ",
+                    new String[]{movieBundle.getOriginalTitle()},
+                    null);
+            detailId = originalTitle.getColumnIndexOrThrow(FavMovieCP.COLUMN_TITLE);
+//            originalTitle.close();
+//            if (detailId != -1) {
+            if (SampleDatabase.getInstance(getActivity()).favMovie().findByOriginalTitle(movieBundle.getOriginalTitle()) != null) {
+
+
                 getActivity().runOnUiThread(() -> {
                     btnUnFav.setVisibility(View.VISIBLE);
-                    btnFav.setVisibility(View.INVISIBLE);
+                    btnFav.setVisibility(View.GONE);
+                });
+            } else {
+                getActivity().runOnUiThread(() -> {
+                    btnUnFav.setVisibility(View.GONE);
+                    btnFav.setVisibility(View.VISIBLE);
                 });
             }
         });
@@ -124,19 +134,20 @@ public class DetailsFragment extends Fragment {
 
     @OnClick(R.id.fav)
     public void onAddClick() {
-        FavMovieEntity favMovieEntity = new FavMovieEntity();
-        favMovieEntity.setOriginalTitle(movieBundle.getOriginalTitle());
-        favMovieEntity.setOverview(movieBundle.getOverview());
-        favMovieEntity.setReleaseDate(movieBundle.getReleaseDate());
-        favMovieEntity.setUserRating(movieBundle.getUserRating() + "/10");
-        favMovieEntity.setAvatarPath(movieBundle.getImageThumb());
-        AsyncTask.execute(() -> {
-            FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().insert(favMovieEntity);
-        });
-        getActivity().runOnUiThread(() -> {
-            btnUnFav.setVisibility(View.VISIBLE);
-            btnFav.setVisibility(View.INVISIBLE);
-        });
+            AsyncTask.execute(() -> {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(FavMovieCP.COLUMN_TITLE, movieBundle.getOriginalTitle());
+                    contentValues.put(FavMovieCP.COLUMN_OVERVIEW, movieBundle.getOverview());
+                    contentValues.put(FavMovieCP.COLUMN_RELEASE, movieBundle.getReleaseDate());
+                    contentValues.put(FavMovieCP.COLUMN_RATING, movieBundle.getUserRating() + "/10");
+                    contentValues.put(FavMovieCP.COLUMN_AVATAR, movieBundle.getImageThumb());
+                    getActivity().getContentResolver().insert(SampleContentProvider.URI_MOVIE, contentValues);
+                    getActivity().runOnUiThread(() -> {
+                        btnUnFav.setVisibility(View.VISIBLE);
+                        btnFav.setVisibility(View.GONE);
+                    });
+
+            });
 
 
     }
@@ -145,12 +156,12 @@ public class DetailsFragment extends Fragment {
     public void onRemoveClick() {
 
         AsyncTask.execute(() -> {
-            FavMovieEntity favMovieEntity = FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().findByOriginalTitle(movieBundle.getOriginalTitle());
-            FavMovieDatabase.getAppDatabase(getActivity()).favMovieDao().delete(favMovieEntity);
-        });
-        getActivity().runOnUiThread(() -> {
-            btnUnFav.setVisibility(View.INVISIBLE);
-            btnFav.setVisibility(View.VISIBLE);
+            FavMovieCP favMovieCP = SampleDatabase.getInstance(getActivity()).favMovie().findByOriginalTitle(movieBundle.getOriginalTitle());
+            SampleDatabase.getInstance(getActivity()).favMovie().delete(favMovieCP);
+            getActivity().runOnUiThread(() -> {
+                btnUnFav.setVisibility(View.GONE);
+                btnFav.setVisibility(View.VISIBLE);
+            });
         });
 
 
@@ -216,4 +227,26 @@ public class DetailsFragment extends Fragment {
                 });
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                FavMovieCP.COLUMN_ID,
+                FavMovieCP.COLUMN_RELEASE,
+                FavMovieCP.COLUMN_AVATAR,
+                FavMovieCP.COLUMN_TITLE,
+                FavMovieCP.COLUMN_RATING,
+                FavMovieCP.COLUMN_OVERVIEW};
+        return new CursorLoader(getActivity(),
+                SampleContentProvider.URI_MOVIE, projection, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }

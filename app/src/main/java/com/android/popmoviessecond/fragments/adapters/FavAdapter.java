@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.popmoviessecond.R;
-import com.android.popmoviessecond.room.entities.FavMovieEntity;
+import com.android.popmoviessecond.room.provider.FavMovieCP;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -23,10 +23,10 @@ import butterknife.ButterKnife;
 
 public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
 
-    private List<FavMovieEntity> favMovieEntities;
+    private List<FavMovieCP> favMovieEntities;
     private Context context;
 
-    public FavAdapter(List<FavMovieEntity> favMovieEntities, Context context) {
+    public FavAdapter(List<FavMovieCP> favMovieEntities, Context context) {
         this.favMovieEntities = favMovieEntities;
         this.context = context;
     }
@@ -41,7 +41,7 @@ public class FavAdapter extends RecyclerView.Adapter<FavAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        FavMovieEntity favMovieEntity = favMovieEntities.get(position);
+        FavMovieCP favMovieEntity = favMovieEntities.get(position);
         holder.originalTitle.setText(favMovieEntity.getOriginalTitle());
         holder.overview.setText(favMovieEntity.getOverview());
         holder.userRating.setText(favMovieEntity.getUserRating());

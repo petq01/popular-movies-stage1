@@ -2,6 +2,7 @@ package com.android.popmoviessecond.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -39,9 +40,11 @@ public class PostersFragment extends Fragment {
     GridView gridview;
 
     Movie movie;
+    private final static String MENU_SELECTED = "selected";
+    SharedPreferences.Editor editor;
+    SharedPreferences pref;
 
     public PostersFragment() {
-
     }
 
 
@@ -57,25 +60,48 @@ public class PostersFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-
+        pref = getActivity().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        editor = pref.edit();
 
     }
 
+    @Override
+    public void setRetainInstance(boolean retain) {
+        super.setRetainInstance(retain);
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posters, container, false);
         ButterKnife.bind(this, v);
-        moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
+
         return v;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onResume() {
+        if (pref == null) {
+            moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
 
-        inflater.inflate(R.menu.menu, menu);
+        }else {
+            switch (pref.getInt(MENU_SELECTED, 1)) {
+                case 1:
+                    moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
+                    break;
+                case 2:
+                    moviesRequest(createAPI().getTopRated(MovieAPI.KEY));
+                    break;
+                default:
+                    moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
+                    break;
+            }
+        }
+
+        super.onResume();
+
     }
+
 
     private MovieAPI createAPI() {
         Retrofit retrofit = new Retrofit.Builder()
@@ -85,6 +111,11 @@ public class PostersFragment extends Fragment {
                 .build();
 
         return retrofit.create(MovieAPI.class);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     public void moviesRequest(Observable<MovieResponse> movieResponse) {
@@ -116,16 +147,22 @@ public class PostersFragment extends Fragment {
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.menu, menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-
         switch (item.getItemId()) {
             case R.id.popular_movies:
+                editor.putInt(MENU_SELECTED, 1).apply();
                 moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
                 return true;
             case R.id.rated:
+                editor.putInt(MENU_SELECTED, 2).apply();
                 moviesRequest(createAPI().getTopRated(MovieAPI.KEY));
                 return true;
             case R.id.personal:
