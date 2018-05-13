@@ -5,13 +5,14 @@ import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import com.android.popmoviessecond.fragments.adapters.ImageAdapter;
 import com.android.popmoviessecond.api.MovieAPI;
@@ -37,12 +38,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PostersFragment extends Fragment {
     @BindView(R.id.gridview)
-    GridView gridview;
+    RecyclerView recyclerView;
 
     Movie movie;
     private final static String MENU_SELECTED = "selected";
     SharedPreferences.Editor editor;
     SharedPreferences pref;
+    public static int index = -1;
+    public static int top = -1;
+    GridLayoutManager mLayoutManager;
 
     public PostersFragment() {
     }
@@ -75,12 +79,25 @@ public class PostersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posters, container, false);
         ButterKnife.bind(this, v);
-
+        mLayoutManager = new GridLayoutManager(getActivity(),2);
+        recyclerView.setLayoutManager(mLayoutManager);
         return v;
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        index = mLayoutManager.findFirstVisibleItemPosition();
+        View v = recyclerView.getChildAt(0);
+        top = (v == null) ? 0 : (v.getTop() - recyclerView.getPaddingTop());
+    }
+
+    @Override
     public void onResume() {
+        if(index != -1)
+        {
+            mLayoutManager.scrollToPositionWithOffset( index, top);
+        }
         if (pref == null) {
             moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
 
@@ -128,8 +145,8 @@ public class PostersFragment extends Fragment {
                         images.add("http://image.tmdb.org/t/p/w185/" + img.posterPath);
 
                     }
-                    gridview.setAdapter(new ImageAdapter(getActivity(), images));
-                    gridview.setOnItemClickListener((parent, v, position, id) -> {
+                    ImageAdapter imageAdapter=new ImageAdapter(getActivity(), images);
+                    imageAdapter.setClickListener((view, position) -> {
                         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                         movie = new Movie();
                         movie.setMovie_id(responses.movieResults.get(position).id);
@@ -142,6 +159,21 @@ public class PostersFragment extends Fragment {
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                     });
+                    recyclerView.setAdapter(imageAdapter);
+
+//                    recyclerView.setOnItemClickListener((parent, v, position, id) -> {
+//                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+//                        movie = new Movie();
+//                        movie.setMovie_id(responses.movieResults.get(position).id);
+//                        movie.setOriginalTitle(responses.movieResults.get(position).originalTitle);
+//                        movie.setOverview(responses.movieResults.get(position).overview);
+//                        movie.setReleaseDate(responses.movieResults.get(position).releaseDate);
+//                        movie.setUserRating(responses.movieResults.get(position).voteAverage);
+//                        movie.setImageThumb("http://image.tmdb.org/t/p/w185/" + responses.movieResults.get(position).posterPath);
+//                        fragmentTransaction.replace(R.id.container_fragments, DetailsFragment.newInstance(movie), DetailsFragment.class.getSimpleName());
+//                        fragmentTransaction.addToBackStack(null);
+//                        fragmentTransaction.commit();
+//                    });
                 });
 
 

@@ -37,7 +37,9 @@ public class ReviewFragment extends Fragment {
     RecyclerView recyclerView;
     Integer movie_id;
     private ReviewAdapter reviewAdapter;
-
+    public static int index = -1;
+    public static int top = -1;
+    LinearLayoutManager mLayoutManager;
     public ReviewFragment() {
 
     }
@@ -56,11 +58,30 @@ public class ReviewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_review, container, false);
         ButterKnife.bind(this, v);
-
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(mLayoutManager);
         Bundle bundle = getArguments();
         movie_id = bundle.getInt("movieId");
         reviewsRequest(createAPI().getReviews(movie_id, MovieAPI.KEY));
         return v;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        index = mLayoutManager.findFirstVisibleItemPosition();
+        View v = recyclerView.getChildAt(0);
+        top = (v == null) ? 0 : (v.getTop() - recyclerView.getPaddingTop());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(index != -1)
+        {
+            mLayoutManager.scrollToPositionWithOffset( index, top);
+        }
     }
 
     public void reviewsRequest(Observable<ReviewResponse> reviewResponseObservable) {
@@ -75,8 +96,6 @@ public class ReviewFragment extends Fragment {
                         reviewModel.content = reviewResponse.getContent();
                         reviewModels.add(reviewModel);
                     }
-                    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    recyclerView.setLayoutManager(layoutManager);
                     reviewAdapter = new ReviewAdapter(reviewModels);
                     recyclerView.setAdapter(reviewAdapter);
                 });
