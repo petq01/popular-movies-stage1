@@ -3,17 +3,21 @@ package com.android.popmoviessecond;
 import android.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 
 import com.android.popmoviessecond.fragments.PostersFragment;
-import com.android.popmoviessecond.room.provider.FavMovieCP;
 
 
 public class MainActivity extends AppCompatActivity  {
-    private static final int LOADER_FAVORITES= 1;
+    Parcelable mListState;
+    LinearLayoutManager mLayoutManager;
+    String LIST_STATE_KEY="RV";
+    int mCurCheckPosition=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -23,38 +27,35 @@ public class MainActivity extends AppCompatActivity  {
         if (savedInstanceState == null) {
             goPostersFragment();
         }
-//        getSupportLoaderManager().initLoader(LOADER_FAVORITES, null, mLoaderCallbacks);
 
     }
-//    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks =
-//            new LoaderManager.LoaderCallbacks<Cursor>() {
+//    protected void onSaveInstanceState(Bundle state) {
+//        super.onSaveInstanceState(state);
 //
-//                @Override
-//                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//                    switch (id) {
-//                        case LOADER_FAVORITES:
-//                            return new CursorLoader(getApplicationContext(),
-//                                    SampleContentProvider.URI_MOVIE,
-//                                    new String[]{FavMovieCP.COLUMN_TITLE},
-//                                    null, null, null);
-//                        default:
-//                            throw new IllegalArgumentException();
-//                    }
-//                }
+//        // Save list state
+//        mListState = mLayoutManager.onSaveInstanceState();
+//        state.putParcelable(LIST_STATE_KEY, mListState);
+//    }
+//    protected void onRestoreInstanceState(Bundle state) {
+//        super.onRestoreInstanceState(state);
 //
-//                @Override
-//                public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//
-//                }
-//
-//                @Override
-//                public void onLoaderReset(Loader<Cursor> loader) {
-//
-//                }
-//
-//
-//            };
+//        // Retrieve list state and list/item positions
+//        if(state != null)
+//            mListState = state.getParcelable(LIST_STATE_KEY);
+//    }
+@Override
+public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt("curChoice", mCurCheckPosition);
+}
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+//        if (mListState != null) {
+//            mLayoutManager.onRestoreInstanceState(mListState);
+//        }
+    }
     public void goPostersFragment(){
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.container_fragments, PostersFragment.newInstance(), PostersFragment.class.getSimpleName());

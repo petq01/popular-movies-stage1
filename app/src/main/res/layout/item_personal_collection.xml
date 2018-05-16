@@ -34,7 +34,7 @@
     <TextView
         android:id="@+id/userRating"
         style="@style/wrap_contents"
-        android:textSize="22sp"
+        android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/imageThumb"
         app:layout_constraintTop_toBottomOf="@+id/originalTitle"
         tools:text="rating" />
@@ -43,7 +43,7 @@
     <TextView
         android:id="@+id/releaseDate"
         style="@style/wrap_contents"
-        android:textSize="22sp"
+        android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/imageThumb"
         app:layout_constraintTop_toBottomOf="@+id/userRating"
         tools:text="release date" />

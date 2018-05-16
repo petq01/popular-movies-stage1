@@ -3,33 +3,28 @@ package com.android.popmoviessecond.fragments;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.popmoviessecond.R;
 import com.android.popmoviessecond.api.MovieAPI;
 import com.android.popmoviessecond.api.model.Movie;
 import com.android.popmoviessecond.api.model.response.VideoResponse;
-import com.android.popmoviessecond.room.provider.FavMovieCP;
-import com.android.popmoviessecond.room.provider.SampleContentProvider;
-import com.android.popmoviessecond.room.provider.SampleDatabase;
+import com.android.popmoviessecond.sqllite.FavoritesProvider;
+import com.android.popmoviessecond.sqllite.MoviesContract;
+import com.android.popmoviessecond.sqllite.FavoriteResult;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.squareup.picasso.Picasso;
 
@@ -43,8 +38,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class DetailsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailsFragment extends Fragment {
     Movie movieBundle;
     @BindView(R.id.originalTitle)
     TextView originalTitle;
@@ -58,16 +52,14 @@ public class DetailsFragment extends Fragment implements
     ImageView imageThumb;
     @BindView(R.id.fav)
     Button btnFav;
-    @BindView(R.id.unfav)
-    Button btnUnFav;
-
-//    FavMovieDatabase favMovieDatabase;
+    private boolean isFavorite = false;
+    private FavoriteResult mMovie;
+    int mCurCheckPosition;
 
     public DetailsFragment() {
         // Required empty public constructor
     }
 
-    private int detailId;
 
 
     public static DetailsFragment newInstance(Movie movie) {
@@ -81,7 +73,6 @@ public class DetailsFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
@@ -95,81 +86,91 @@ public class DetailsFragment extends Fragment implements
         if (bundle != null) {
 
             movieBundle = bundle.getParcelable("Movie");
+            mMovie = new FavoriteResult(movieBundle.getImageThumb(), movieBundle.getOverview(), movieBundle.getReleaseDate(),
+                    movieBundle.getMovie_id(), movieBundle.getOriginalTitle(), movieBundle.getUserRating());
             originalTitle.setText(movieBundle.getOriginalTitle());
-            Picasso.with(getActivity()).load(movieBundle.getImageThumb()).placeholder(R.drawable.ic_none).error(R.drawable.ic_error).into(imageThumb);
+            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + movieBundle.getImageThumb()).placeholder(R.drawable.ic_none).error(R.drawable.ic_error).into(imageThumb);
             userRating.setText(String.format("%s/10", movieBundle.getUserRating().toString()));
             releaseDate.setText(movieBundle.getReleaseDate());
             overview.setText(movieBundle.getOverview());
-
-            checkMovieFavorite();
         }
 
 
         return v;
     }
 
-    public void checkMovieFavorite() {
-        AsyncTask.execute(() -> {
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkExistence();
+        fillHeart();
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            mCurCheckPosition = savedInstanceState.getInt("curChoice", 0);
+        }
+    }
+    private void checkExistence() {
+        if (mMovie == null) {
+            return;
+        }
+        Uri uri = Uri.withAppendedPath(FavoritesProvider.PROVIDER_URI, String.valueOf(mMovie.getId()));
+        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
 
-            Cursor originalTitle = getActivity().getContentResolver().query(
-                    SampleContentProvider.URI_MOVIE,
-                    new String[]{FavMovieCP.COLUMN_TITLE},
-                    "originalTitle = ? ",
-                    new String[]{movieBundle.getOriginalTitle()},
-                    null);
-            detailId = originalTitle.getColumnIndexOrThrow(FavMovieCP.COLUMN_TITLE);
-//            originalTitle.close();
-//            if (detailId != -1) {
-            if (SampleDatabase.getInstance(getActivity()).favMovie().findByOriginalTitle(movieBundle.getOriginalTitle()) != null) {
-
-
-                getActivity().runOnUiThread(() -> {
-                    btnUnFav.setVisibility(View.VISIBLE);
-                    btnFav.setVisibility(View.GONE);
-                });
-            } else {
-                getActivity().runOnUiThread(() -> {
-                    btnUnFav.setVisibility(View.GONE);
-                    btnFav.setVisibility(View.VISIBLE);
-                });
-            }
-        });
+        if (cursor != null) {
+            isFavorite = cursor.getCount() > 0;
+            cursor.close();
+        }
     }
 
     @OnClick(R.id.fav)
-    public void onAddClick() {
-            AsyncTask.execute(() -> {
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(FavMovieCP.COLUMN_TITLE, movieBundle.getOriginalTitle());
-                    contentValues.put(FavMovieCP.COLUMN_OVERVIEW, movieBundle.getOverview());
-                    contentValues.put(FavMovieCP.COLUMN_RELEASE, movieBundle.getReleaseDate());
-                    contentValues.put(FavMovieCP.COLUMN_RATING, movieBundle.getUserRating() + "/10");
-                    contentValues.put(FavMovieCP.COLUMN_AVATAR, movieBundle.getImageThumb());
-                    getActivity().getContentResolver().insert(SampleContentProvider.URI_MOVIE, contentValues);
-                    getActivity().runOnUiThread(() -> {
-                        btnUnFav.setVisibility(View.VISIBLE);
-                        btnFav.setVisibility(View.GONE);
-                    });
+    public void checkMovieFavorite() {
+        if (getView() != null) {
+            if (isFavorite) {
+                removeFromFavorites();
+            } else {
+                addToFavorites();
+            }
+        }
 
-            });
-
-
+        checkExistence();
+        fillHeart();
     }
 
-    @OnClick(R.id.unfav)
-    public void onRemoveClick() {
-
-        AsyncTask.execute(() -> {
-            FavMovieCP favMovieCP = SampleDatabase.getInstance(getActivity()).favMovie().findByOriginalTitle(movieBundle.getOriginalTitle());
-            SampleDatabase.getInstance(getActivity()).favMovie().delete(favMovieCP);
-            getActivity().runOnUiThread(() -> {
-                btnUnFav.setVisibility(View.GONE);
-                btnFav.setVisibility(View.VISIBLE);
-            });
-        });
-
-
+    private void fillHeart() {
+        if (isFavorite) {
+            btnFav.setBackgroundResource(R.drawable.ic_unfav);
+        } else {
+            btnFav.setBackgroundResource(R.drawable.ic_fav_heart);
+        }
     }
+
+    private void removeFromFavorites() {
+        final ContentResolver contentResolver = getActivity().getContentResolver();
+        final String[] selectionArgs = {String.valueOf(mMovie.getId())};
+        final String columnMovieId = MoviesContract.FavoriteEntry.COLUMN_MOVIE_ID + " = ?";
+
+        int nRows = contentResolver.delete(FavoritesProvider.PROVIDER_URI, columnMovieId, selectionArgs);
+        if (nRows > 0) {
+            Toast.makeText(getActivity(), " Removed", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void addToFavorites() {
+        final ContentResolver contentResolver = getActivity().getContentResolver();
+        final ContentValues values = MoviesContract.FavoriteEntry.resolveMovie(mMovie);
+
+        Uri uri = contentResolver.insert(FavoritesProvider.PROVIDER_URI, values);
+        if (uri != null) {
+            Toast.makeText(getActivity(), "Liked ", Toast.LENGTH_LONG).show();
+        }
+    }
+//
+////            if (SampleDatabase.getInstance(getActivity()).favMovie().findByOriginalTitle(movieBundle.getOriginalTitle()) != null) {
+
 
     private MovieAPI createAPI() {
         Retrofit retrofit = new Retrofit.Builder()
@@ -231,26 +232,4 @@ public class DetailsFragment extends Fragment implements
                 });
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = {
-                FavMovieCP.COLUMN_ID,
-                FavMovieCP.COLUMN_RELEASE,
-                FavMovieCP.COLUMN_AVATAR,
-                FavMovieCP.COLUMN_TITLE,
-                FavMovieCP.COLUMN_RATING,
-                FavMovieCP.COLUMN_OVERVIEW};
-        return new CursorLoader(getActivity(),
-                SampleContentProvider.URI_MOVIE, projection, null, null, null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 }

@@ -63,16 +63,11 @@ public class PostersFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        setRetainInstance(true);
         pref = getActivity().getSharedPreferences("MyPref", 0); // 0 - for private mode
         editor = pref.edit();
 
     }
 
-    @Override
-    public void setRetainInstance(boolean retain) {
-        super.setRetainInstance(retain);
-    }
 
     @Nullable
     @Override
@@ -87,17 +82,18 @@ public class PostersFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        index = mLayoutManager.findFirstVisibleItemPosition();
-        View v = recyclerView.getChildAt(0);
-        top = (v == null) ? 0 : (v.getTop() - recyclerView.getPaddingTop());
+//        index = mLayoutManager.findFirstVisibleItemPosition();
+//        View v = recyclerView.getChildAt(0);
+//        top = (v == null) ? 0 : (v.getTop() - recyclerView.getPaddingTop());
     }
 
     @Override
     public void onResume() {
-        if(index != -1)
-        {
-            mLayoutManager.scrollToPositionWithOffset( index, top);
-        }
+//        if(index != -1)
+//        {
+//            mLayoutManager.scrollToPositionWithOffset( index, top);
+//        }
+
         if (pref == null) {
             moviesRequest(createAPI().getPopularMovies(MovieAPI.KEY));
 
@@ -154,7 +150,7 @@ public class PostersFragment extends Fragment {
                         movie.setOverview(responses.movieResults.get(position).overview);
                         movie.setReleaseDate(responses.movieResults.get(position).releaseDate);
                         movie.setUserRating(responses.movieResults.get(position).voteAverage);
-                        movie.setImageThumb("http://image.tmdb.org/t/p/w185/" + responses.movieResults.get(position).posterPath);
+                        movie.setImageThumb(responses.movieResults.get(position).posterPath);
                         fragmentTransaction.replace(R.id.container_fragments, DetailsFragment.newInstance(movie), DetailsFragment.class.getSimpleName());
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();

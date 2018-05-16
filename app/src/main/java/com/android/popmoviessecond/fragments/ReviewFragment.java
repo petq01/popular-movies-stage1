@@ -40,6 +40,7 @@ public class ReviewFragment extends Fragment {
     public static int index = -1;
     public static int top = -1;
     LinearLayoutManager mLayoutManager;
+    int mCurCheckPosition;
     public ReviewFragment() {
 
     }
@@ -70,20 +71,27 @@ public class ReviewFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        index = mLayoutManager.findFirstVisibleItemPosition();
-        View v = recyclerView.getChildAt(0);
-        top = (v == null) ? 0 : (v.getTop() - recyclerView.getPaddingTop());
+//        index = mLayoutManager.findFirstVisibleItemPosition();
+//        View v = recyclerView.getChildAt(0);
+//        top = (v == null) ? 0 : (v.getTop() - recyclerView.getPaddingTop());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(index != -1)
-        {
-            mLayoutManager.scrollToPositionWithOffset( index, top);
+//        if(index != -1)
+//        {
+//            mLayoutManager.scrollToPositionWithOffset( index, top);
+//        }
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            mCurCheckPosition = savedInstanceState.getInt("curChoice", 0);
         }
     }
-
     public void reviewsRequest(Observable<ReviewResponse> reviewResponseObservable) {
 
         reviewResponseObservable.subscribeOn(Schedulers.io())
