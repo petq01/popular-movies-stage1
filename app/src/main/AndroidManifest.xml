@@ -21,11 +21,6 @@
             </intent-filter>
         </activity>
 
-        <!--<provider-->
-            <!--android:authorities="com.android.popmoviessecond"-->
-            <!--android:name=".room.provider.SampleContentProvider" android:exported="true"-->
-            <!--android:protectionLevel="signature"-->
-            <!--android:readPermission="true" android:writePermission="true"/>-->
         <provider
             android:authorities="com.android.popmoviessecond"
             android:name=".sqllite.FavoritesProvider" android:exported="true"
