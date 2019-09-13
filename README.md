@@ -5,8 +5,8 @@ When user choose one movie, he can choose to click on personalized button to wat
 Save movie into his personal collection on device.
 He can view his personal collection based on the usage of the local storage Room.
 
-![alt text](https://image.ibb.co/hOjrAz/bg_cmics.jpg)
-![alt text](https://image.ibb.co/hOjrAz/bg_cmics.jpg)
-![alt text](https://image.ibb.co/hOjrAz/bg_cmics.jpg)
-![alt text](https://image.ibb.co/hOjrAz/bg_cmics.jpg)
-![alt text](https://image.ibb.co/hOjrAz/bg_cmics.jpg)
+![popMoviesPosters](https://github.com/petq01/udacity-popular-movies-app/blob/master/popMoviesPosters.png?raw=true)
+![detail movie](https://github.com/petq01/udacity-popular-movies-app/blob/master/detail%20movie.png?raw=true)
+![reviewMovie](https://github.com/petq01/udacity-popular-movies-app/blob/master/reviewMovie.png?raw=true)
+![favCollection](https://github.com/petq01/udacity-popular-movies-app/blob/master/favCollection.png?raw=true)
+![sortingFirstScreen](https://github.com/petq01/udacity-popular-movies-app/blob/master/sortingFirstScreen.png?raw=true)
